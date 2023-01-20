@@ -9,7 +9,7 @@ public class FountainOfYouth
     private int _mediumMap = 6;
     private int _largeMap = 8;
     private int _mapSize;
-    bool _debugging = true;
+    bool _debugging = false;
 
     private (int Row, int Col) _playerPosition, _startPosition;
     private int _bulletsRemaining;
