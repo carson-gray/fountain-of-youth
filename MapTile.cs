@@ -54,7 +54,7 @@
 
     public abstract void View();
 
-    public abstract void Shoot();
+    public abstract bool Shoot();
 }
 
 class FountainTile : MapTile
@@ -64,7 +64,7 @@ class FountainTile : MapTile
         ID = RoomType.Goal;
         CanToggle = true;
         IsActive = false;
-        ActivateText = "You leap into the shimmering pool and are overcome by a surge of energy.\nHave you become immortal, or is the water just cold?\nEither way, it is time to retrace your steps and return to the surface.";
+        ActivateText = "\tYou leap into the shimmering pool and are overcome by a surge of energy.\n\tHave you become immortal, or is the water just cold?\n\tEither way, it is time to retrace your steps and return to the surface.";
         ActiveRoomText = "You are back at the fountain, as beautiful as ever.";
         NonActiveRoomText = "At last, the fountain! You are filled with wonder as you gaze upon the sapphire cascade.";
         ActiveAdjacentText = "You sense the familiar freshness of the fountain. It is nearby.";
@@ -92,10 +92,12 @@ class FountainTile : MapTile
         Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
-    public override void Shoot() 
+    public override bool Shoot() 
     {
         if (IsActive == false) Console.WriteLine("You hear a splash. Could it be the fountain?");
-        else Console.WriteLine("Did you really just shoot at the Fountain of Youth?");
+        else Console.WriteLine("You hear a splash. Did you really just shoot at the Fountain of Youth?");
+
+        return true;
     }
 }
 
@@ -149,10 +151,11 @@ class OgreTile : MapTile
         Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
-    public override void Shoot()
+    public override bool Shoot()
     {
         if (IsActive) ToggleActive();
         else Console.WriteLine("Your ears are greeted with a splatter. You shot a corpse!");
+        return false;
     }
 }
 
@@ -205,10 +208,11 @@ class GoblinTile : MapTile
         Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
-    public override void Shoot() 
+    public override bool Shoot() 
     {
         if(IsActive) ToggleActive(); 
         else Console.WriteLine("The blast echoes, but nothing was hit.");
+        return false;
     }
 }
 
@@ -244,7 +248,11 @@ class PitTile : MapTile
         Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
-    public override void Shoot() { Console.WriteLine("The blast echoes, but nothing was hit."); }
+    public override bool Shoot() 
+    {
+        Console.WriteLine("The blast echoes, but nothing was hit.");
+        return false;
+    }
 }
 
 class EmptyTile : MapTile
@@ -277,7 +285,11 @@ class EmptyTile : MapTile
         Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
-    public override void Shoot() { Console.WriteLine("The blast echoes, but nothing was hit."); }
+    public override bool Shoot() 
+    {
+        Console.WriteLine("The blast echoes, but nothing was hit.");
+        return false;
+    }
 }
 
 class WarpTile : MapTile
@@ -312,7 +324,11 @@ class WarpTile : MapTile
         Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
-    public override void Shoot() { Console.WriteLine("You hear a sizzle and a zap. Where has the bullet gone?"); }
+    public override bool Shoot() 
+    {
+        Console.WriteLine("The musket ball teleports with a sizzle and a zap...");
+        return true;
+    }
 }
 
 class StartTile : MapTile
@@ -349,5 +365,9 @@ class StartTile : MapTile
         Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
-    public override void Shoot() { Console.WriteLine("The blast echoes, but nothing was hit."); }
+    public override bool Shoot() 
+    {
+        Console.WriteLine("The blast echoes, but nothing was hit.");
+        return false;
+    }
 }

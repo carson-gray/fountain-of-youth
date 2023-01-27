@@ -10,6 +10,7 @@ public class FountainOfYouth
     private int _largeMap = 8;
     private int _mapSize;
     bool _debugging = false;
+    bool _shotYourself = false;
 
     private (int Row, int Col) _playerPosition, _startPosition;
     private int _bulletsRemaining;
@@ -41,7 +42,7 @@ public class FountainOfYouth
         else
         {
             Console.WriteLine("Welcome to the Fountain of Youth game!");
-            Console.WriteLine("It is a text-based adventure game where you navigate a grid world in search of the fountain of youth.");
+            Console.WriteLine("It is a text-based adventure game where you navigate a grid world in search of the Fountain of Youth.");
             Console.WriteLine("\nBefore we begin, here are the controls:");
             PrintHelpText();
 
@@ -58,6 +59,7 @@ public class FountainOfYouth
             Console.CursorVisible = false;
 
             Console.Write("\nThank you! Let the journey commence. ");
+
             Thread.Sleep(2500);
 
             Console.Clear();
@@ -68,10 +70,10 @@ public class FountainOfYouth
             Thread.Sleep(2000);
             Console.ForegroundColor = ConsoleColor.Gray;
 
-            Console.WriteLine("\nYou have travelled far to find this dungeon, which legend says holds the fountain of youth!");
+            Console.WriteLine("\nYou have travelled far to find this dungeon, which legend says holds the Fountain of Youth!");
             Console.WriteLine("The entrance is but a humble hole in the ground.");
 
-            Thread.Sleep(5000);
+            Thread.Sleep(4000);
 
             Console.CursorVisible = true;
             Console.Write("\nYou fasten your rope to a nearby tree.\nDo you dare drop it into the abyss below? [ENTER] ");
@@ -83,8 +85,11 @@ public class FountainOfYouth
             Console.ReadKey(true);
             Console.WriteLine();
 
+            PrintPlayer();
+
             Console.CursorVisible = false;
-            Console.WriteLine("\nArmed with a musket and a satchel of smoked oysters, you enter the unknown.");
+            Console.WriteLine("Armed with a musket and a satchel of smoked oysters, you enter the unknown.");
+
             Thread.Sleep(4000);
             Console.CursorVisible = true;
         }
@@ -96,9 +101,11 @@ public class FountainOfYouth
     private void PrintHelpText()
     {
         Console.WriteLine("\n\t* Choose an action ('move', 'shoot', 'pray').");
+        Console.WriteLine("\t\t- You can only shoot if you have musket balls.");
+        Console.WriteLine("\t\t- You can only move if you have oysters (you are diabetic).");
         Console.WriteLine("\t* If you move or shoot, also type a direction ('north', 'south', 'east', 'west').");
         Console.WriteLine("\t\t- Ex. 'move east', 'shoot north'");
-        Console.WriteLine("\t* Prayers are a scarce resource that guide you back to the start.");
+        Console.WriteLine("\t* Prayers ask the gods for guidance back to the start.");
         Console.WriteLine("\t* Typing 'help' returns to this screen.\n");
     }
 
@@ -110,13 +117,86 @@ public class FountainOfYouth
         while (!gameOver) (gameOver, victory) = Update();
 
         Console.ForegroundColor = ConsoleColor.Yellow;
-        if (victory == true) Console.WriteLine("On to the next adventure...");
-        if (victory == false) Console.WriteLine("In your quest for eternal youth, you found eternal death.");
+        if (victory == true) { Console.WriteLine("On to the next adventure..."); PrintWin(); }
+        if (victory == false) { Console.WriteLine("In your quest for eternal youth, you found eternal death."); PrintDeath(); }
+
+        Console.ForegroundColor = ConsoleColor.Gray;
         Console.Write("Press ENTER to quit: ");
         Console.ReadKey();
-        Console.ForegroundColor = ConsoleColor.Gray;
         Console.WriteLine();
         Environment.Exit(0);
+    }
+
+
+    private void PrintDeath()
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+
+        string l0, l1, l2, l3, l4;
+
+        l0 = "\t\t#uDedFool";
+        l1 = "\t\t __/V\\__ ";
+        l2 = "\t\t* (;_;)*";
+        l3 = "\t\t   / \\* ";
+        l4 = "\t\t * ~~~  ";
+
+        Console.WriteLine();  // buffer
+        Console.WriteLine(l0);
+        Console.WriteLine(l1);
+        Console.WriteLine(l2);
+        Console.WriteLine(l3);
+        Console.WriteLine(l4);
+        Console.WriteLine();  // buffer
+
+        Console.ForegroundColor = ConsoleColor.Gray;  // reset
+    }
+
+
+    private void PrintWin()
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+
+        string l0, l1, l2, l3, l4;
+
+        l0 = "\t\t#4evrYung ";
+        l1 = "\t\t __/V\\__ ";
+        l2 = "\t\t  (^.^) ";
+        l3 = "\t\t  b|_|b ";
+        l4 = "\t\t   b b  ";
+
+        Console.WriteLine();  // buffer
+        Console.WriteLine(l0);
+        Console.WriteLine(l1);
+        Console.WriteLine(l2);
+        Console.WriteLine(l3);
+        Console.WriteLine(l4);
+        Console.WriteLine();  // buffer
+
+        Console.ForegroundColor = ConsoleColor.Gray;  // reset
+    }
+
+
+    private void PrintPlayer()
+    {
+        Console.ForegroundColor = ConsoleColor.Gray;
+
+        string l0, l1, l2, l3, l4;
+
+        l0 = "\t\t#Rdy2Rumbl ";
+        l1 = "\t\t __/V\\__ ";
+        l2 = "\t\t  (o_6) ";
+        l3 = "\t\t  b|/|b";
+        l4 = "\t\t   b b  ";
+
+        Console.WriteLine();  // buffer
+        Console.WriteLine(l0);
+        Console.WriteLine(l1);
+        Console.WriteLine(l2);
+        Console.WriteLine(l3);
+        Console.WriteLine(l4);
+        Console.WriteLine();  // buffer
+
+        Console.ForegroundColor = ConsoleColor.Gray;  // reset
     }
 
 
@@ -127,7 +207,9 @@ public class FountainOfYouth
 
         if (_turnsRemaining == 0)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\nYou have run out of oysters and subsequently your will to live.");
+            Console.ForegroundColor = ConsoleColor.Gray;
             return (true, false);
         }
 
@@ -137,7 +219,13 @@ public class FountainOfYouth
 
         // room interaction logic
         (bool gameOver, bool didYouWin, bool teleportCheck, string gameOverMessage) = InteractWithRoom(currentTile);
-        if (teleportCheck) return (false, false);  // reset in a different room
+        if (teleportCheck)
+        {
+            Console.CursorVisible = false;
+            Thread.Sleep(2500);
+            Console.CursorVisible = true;
+            return (false, false);  // reset in a different room
+        }
 
         if (gameOver)
         {
@@ -167,6 +255,9 @@ public class FountainOfYouth
         // what to do next
         Console.WriteLine($"You have {_turnsRemaining} smoked oysters and {_bulletsRemaining} musket balls.");
         TakeAction();
+
+        if (_shotYourself) return (true, false);
+
         _turnsRemaining--;
         return (false, false);
     }
@@ -218,6 +309,7 @@ public class FountainOfYouth
 
         }
 
+        Console.WriteLine("You have learned all you will. It is time to act!");
         Console.WriteLine();
     }
 
@@ -305,22 +397,22 @@ public class FountainOfYouth
     {
         int col = _playerPosition.Col;
         int row = _playerPosition.Row;
-        string wallBump = "You walk straight into the wall. There's nothing that way!";
+        string wallBump = "\n\tYou walk straight into the wall. There's nothing that way!\n";
 
         switch (direction)
         {
             case Direction.North:
                 if (row != 0) { _playerPosition.Row = row - 1; return true; }
-                else { Console.WriteLine(wallBump); return false; }
+                else { Console.ForegroundColor = ConsoleColor.DarkGray; Console.WriteLine(wallBump); Console.ForegroundColor = ConsoleColor.Gray; return false; }
             case Direction.South:
                 if (row != _mapSize - 1) { _playerPosition.Row = row + 1; return true; }
-                else { Console.WriteLine(wallBump); return false; }
+                else { Console.ForegroundColor = ConsoleColor.DarkGray; Console.WriteLine(wallBump); Console.ForegroundColor = ConsoleColor.Gray; return false; }
             case Direction.East:
                 if (col != _mapSize - 1) { _playerPosition.Col = col + 1; return true; }
-                else { Console.WriteLine(wallBump); return false; }
+                else { Console.ForegroundColor = ConsoleColor.DarkGray; Console.WriteLine(wallBump); Console.ForegroundColor = ConsoleColor.Gray; return false; }
             case Direction.West:
                 if (col != 0) { _playerPosition.Col = col - 1; return true; }
-                else { Console.WriteLine(wallBump); return false; }
+                else { Console.ForegroundColor = ConsoleColor.DarkGray; Console.WriteLine(wallBump); Console.ForegroundColor = ConsoleColor.Gray; return false; }
             default:
                 return false;
         }
@@ -331,6 +423,10 @@ public class FountainOfYouth
     {
         int col = _playerPosition.Col;
         int row = _playerPosition.Row;
+        bool endTurn = false;
+
+        bool isSpecial = false;
+        (int, int) specialCoords = (-1, -1);
 
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine();
@@ -340,27 +436,61 @@ public class FountainOfYouth
             switch (direction)
             {
                 case Direction.North:
-                    if (row != 0) { Console.Write("\t"); _map[row-1, col].Shoot(); _bulletsRemaining--; break; }
+                    if (row != 0) 
+                    {
+                        Console.Write("\t");
+                        isSpecial = _map[row-1, col].Shoot();
+                        if (isSpecial) specialCoords = (row - 1, col);
+                        _bulletsRemaining--;
+                        break; 
+                    }
                     else { Console.WriteLine("\tBang! You just shot at a wall."); _bulletsRemaining--; break; }
+                
                 case Direction.South:
-                    if (row != _mapSize - 1) { Console.Write("\t"); _map[row+1, col].Shoot(); _bulletsRemaining--; break; }
+                    if (row != _mapSize - 1) 
+                    {
+                        Console.Write("\t");
+                        isSpecial = _map[row+1, col].Shoot();
+                        if (isSpecial) specialCoords = (row + 1, col);
+                        _bulletsRemaining--;
+                        break;
+                    }
                     else { Console.WriteLine("\tBang! You just shot at a wall."); _bulletsRemaining--; break; }
+                
                 case Direction.East:
-                    if (col != _mapSize - 1) { Console.Write("\t"); _map[row, col+1].Shoot(); _bulletsRemaining--; break; }
+                    if (col != _mapSize - 1) 
+                    {
+                        Console.Write("\t");
+                        isSpecial = _map[row, col+1].Shoot();
+                        if (isSpecial) specialCoords = (row, col + 1);
+                        _bulletsRemaining--;
+                        break; 
+                    }
                     else { Console.WriteLine("\tBang! You just shot at a wall."); _bulletsRemaining--; break; }
+                
                 case Direction.West:
-                    if (col != 0) { Console.Write("\t"); _map[row, col-1].Shoot(); _bulletsRemaining--; break; }
+                    if (col != 0) 
+                    { 
+                        Console.Write("\t");
+                        isSpecial = _map[row, col-1].Shoot();
+                        if (isSpecial) specialCoords = (row, col - 1);
+                        _bulletsRemaining--; 
+                        break; 
+                    }
                     else { Console.WriteLine("\tBang! You just shot at a wall."); _bulletsRemaining--; break; }
+                
                 default:
                     break;
             }
         }
         else Console.WriteLine("\tYou aim your empty musket and say \"blammo!\"");
 
-        Console.WriteLine($"\tYou have {_bulletsRemaining} musket balls remaining.");
+        if (isSpecial) endTurn = HandleSpecialShot(specialCoords);
+        if (!endTurn) Console.WriteLine($"\tYou have {_bulletsRemaining} musket balls remaining.");
+
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.Gray;
-        return false;
+        return endTurn;
     }
     
     
@@ -441,8 +571,13 @@ public class FountainOfYouth
                     Console.ReadKey(true);
                     Console.WriteLine("\n");
 
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     currentTile.ToggleActive();  // bathe in fountain of youth
+                    Console.ForegroundColor = ConsoleColor.Gray;
                     _map[_startPosition.Row, _startPosition.Col].ToggleActive();  // unlock start
+                    Console.CursorVisible = false;
+                    Thread.Sleep(3000);
+                    Console.CursorVisible = true;
                 }
                 break;
 
@@ -494,6 +629,10 @@ public class FountainOfYouth
 
         currentTile.IsActive = false;
 
+        Console.CursorVisible = false;
+        Thread.Sleep(2500);
+        Console.CursorVisible = true;
+
         return (false, false, false, "goblin");
     }
 
@@ -540,7 +679,9 @@ public class FountainOfYouth
                     {
                         currentTile.IsActive = false;
                         _bulletsRemaining--;
-                        Console.WriteLine("Praise! The ogre crashes to the ground with a musket ball between its eyes.");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("\n\tPraise! The ogre crashes to the ground with a musket ball between its eyes.");
+                        Console.ForegroundColor = ConsoleColor.Gray;
                         return (false, false, false, "shouldn't be over");
                     }
                 }
@@ -551,26 +692,27 @@ public class FountainOfYouth
                 double oysterMean = 0;
                 double oysterStd = 0;
 
-                Console.WriteLine("\nYou think back to your monsters unit in Magical Zoology 101.");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("\n\tYou think back to your monsters unit in Magical Zoology 101.");
 
                 switch (_difficulty)
                 {
                     case Difficulty.Easy:
                         oysterMean = 8;
                         oysterStd = 4;
-                        Console.WriteLine("An ogre this size wants between 2 and 14 oysters, 90% of the time.");
+                        Console.WriteLine("\tAn ogre this size wants between 2 and 14 oysters, 90% of the time.");
                         break;
 
                     case Difficulty.Normal:
                         oysterMean = 12;
                         oysterStd = 4;
-                        Console.WriteLine("An ogre this size wants between 6 and 18 oysters, 90% of the time.");
+                        Console.WriteLine("\tAn ogre this size wants between 6 and 18 oysters, 90% of the time.");
                         break;
 
                     case Difficulty.Hard:
                         oysterMean = 16;
                         oysterStd = 4;
-                        Console.WriteLine("An ogre this size wants between 10 and 22 oysters, 90% of the time.");
+                        Console.WriteLine("\tAn ogre this size wants between 10 and 22 oysters, 90% of the time.");
                         break;
                 }
 
@@ -578,7 +720,8 @@ public class FountainOfYouth
 
                 while (true)
                 {
-                    Console.Write("It's a gamble. How many oysters do you throw? ");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write("\nIt's a gamble. How many oysters do you throw? ");
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     try { oysterBet = Math.Clamp(Convert.ToInt32(Console.ReadLine()), 0, _turnsRemaining - 1); }
                     catch (FormatException) { return (true, false, false, "\nYou freeze up, and the ogre devours you!"); }
@@ -589,7 +732,9 @@ public class FountainOfYouth
                 int oysterDraw = Math.Clamp(DrawFromNormalDist(oysterMean, oysterStd), 0, Int32.MaxValue);
                 if (oysterBet >= oysterDraw)
                 {
-                    Console.WriteLine("\nYeehaw! The ogre falls for your oyster gambit.\nYou scramble away in the dark.");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n\tYeehaw! The ogre falls for your oyster gambit.\n\tYou scramble away in the dark.");
+                    Console.ForegroundColor = ConsoleColor.Gray;
                     _turnsRemaining -= oysterBet;
 
                     int escapeValOne = _rand.Next(0, 2);  // row or column?
@@ -645,10 +790,10 @@ public class FountainOfYouth
     {
         int choice;
 
-        Console.WriteLine("\nWhat difficulty would you like?");
-        Console.WriteLine($"\t1 - Easy");
-        Console.WriteLine($"\t2 - Normal");
-        Console.WriteLine($"\t3 - Hard");
+        Console.WriteLine("\nWhat sort of adventurer are you?");
+        Console.WriteLine($"\t1 - Novice");
+        Console.WriteLine($"\t2 - Hobbyist");
+        Console.WriteLine($"\t3 - Professional");
 
         while (true)
         {
@@ -716,7 +861,12 @@ public class FountainOfYouth
 
         }
 
-        ShuffleMap();
+        while (true)
+        {
+            ShuffleMap();
+            if (ManhattanDistance(FindStartTile(), FindGoalTile()) >= 2) break;  // make sure start and goal aren't adjacent
+        }
+
         _startPosition = _playerPosition = FindStartTile();
         Console.WriteLine("\nYou feel a deep rumbling. The dungeon has taken shape and awaits its challenger.");
     }
@@ -856,7 +1006,7 @@ public class FountainOfYouth
                 break;
 
             case Difficulty.Normal:
-                _prayersRemaining = 2;
+                _prayersRemaining = 1;
                 _turnsRemaining = Convert.ToInt32(numTiles);
 
                 // BULLETS
@@ -905,5 +1055,115 @@ public class FountainOfYouth
 
         Environment.Exit(2);
         return (0, 0);
+    }
+
+
+    private (int, int) FindGoalTile()
+    {
+        for (int i = 0; i < _mapSize; i++)
+        {
+            for (int j = 0; j < _mapSize; j++)
+            {
+                if (_map[i, j].ID == MapTile.RoomType.Goal) { return (i, j); }
+            }
+        }
+
+        Environment.Exit(2);
+        return (0, 0);
+    }
+
+
+    private int ManhattanDistance((int, int) pt1, (int, int) pt2)
+    {
+        int manDist = Math.Abs(pt1.Item1 - pt2.Item1) + Math.Abs(pt1.Item2 - pt2.Item2);
+        return manDist;
+    }
+
+
+    private bool HandleSpecialShot((int, int) coords)
+    {
+        if (_map[coords.Item1, coords.Item2].ID == MapTile.RoomType.Goal)
+        {
+            return FountainShoot();  // always returns true
+        }
+        else if (_map[coords.Item1, coords.Item2].ID == MapTile.RoomType.Warp)
+        {
+            return WarpShoot();
+        }
+        return false;  // whether or not to end the turn
+    }
+
+
+    private bool WarpShoot()
+    {
+        bool endTurn = false;
+
+        // Selects a random tile to shoot
+        int randRow = _rand.Next(_mapSize);
+        int randCol = _rand.Next(_mapSize);
+
+        // If it isn't the player's tile, shoot it
+        if ((randRow, randCol) != _playerPosition)
+        {
+            Console.Write("\t");  // matching formatting
+            bool isSpecial = _map[randRow, randCol].Shoot();
+            if(isSpecial) endTurn = HandleSpecialShot((randRow, randCol));  // recursively call HandleSpecial if warp or fountain
+        }
+
+        else
+        {
+            // handle player death
+            endTurn = _shotYourself = true;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write("\nA bullet appears out of thin air and explodes your face!");
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
+        return endTurn;
+    }
+
+
+    private bool FountainShoot()
+    {
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("\n\tA deep rumbling builds, rattling your bones. The dungeon is angry.");
+        Console.WriteLine("\tIn your hubris, you damaged what you sought.");
+        Console.WriteLine("\tThe world begins to spin. Is the dungeon transforming?");
+
+        (int, int) ftnCoords = FindGoalTile();
+        bool alreadyBathed = _map[ftnCoords.Item1, ftnCoords.Item2].IsActive;
+
+        if (alreadyBathed) Console.WriteLine("\tOh well, you've already bathed in the fountain...\n\tTime to get the hell out of dodge!");
+        else Console.WriteLine("\tYou'll have plenty of time to mope once you're immortal...\n\tTime to find that fountain and dance with infinity!");
+
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.Write("\nYou brace yourself as the room takes on a new shape.\nWhat does the dungeon have in store for you? [ENTER] ");
+
+        Console.ReadKey(true);
+
+        _prayersRemaining = 0;  // lose the favor of the gods
+
+        ReactivateAllMonsters();
+
+        while (true)
+        {
+            ShuffleMap();  // player stays where they are, make sure they aren't next to or on start or goal
+            if (ManhattanDistance(FindStartTile(), _playerPosition) >= 2 && ManhattanDistance(FindGoalTile(), _playerPosition) >= 2) break;
+        }
+
+        return true;
+    }
+
+
+    private void ReactivateAllMonsters()
+    {
+        for (int i = 0; i < _mapSize; i++)
+        {
+            for (int j = 0; j < _mapSize; j++)
+            {
+                if (_map[i, j].ID == MapTile.RoomType.Goblin) _map[i, j].IsActive = true;
+                else if (_map[i, j].ID == MapTile.RoomType.Ogre) _map[i, j].IsActive = true;
+            }
+        }
     }
 }
