@@ -1,4 +1,14 @@
-﻿FountainOfYouth game = new();
+﻿bool keepPlaying = true;
+bool quickStart = false;
+
+while (keepPlaying)
+{
+    FountainOfYouth game = new(quickStart: quickStart);
+    (keepPlaying, quickStart) = game.Run();
+}
+
+Environment.Exit(0);
+
 
 public class FountainOfYouth
 {
@@ -26,18 +36,27 @@ public class FountainOfYouth
     private enum Direction { North, South, East, West, Null }
     
 
-    public FountainOfYouth()
+    public FountainOfYouth(bool quickStart = false)
     {
         Console.Title = "Fountain of Youth";
         Console.ForegroundColor = ConsoleColor.Gray;
+        Console.BackgroundColor = ConsoleColor.Black;
 
-        if (_debugging)
+        if (_debugging || quickStart)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n[NEW GAME CREATED]");
+            Console.ForegroundColor = ConsoleColor.Gray;
             AskForDifficulty();
             AskForMapSize();
             SetResourcesByMapSize();
             _map = new MapTile[_mapSize, _mapSize];
             PopulateMap();
+            Console.Clear();
+
+            PrintPlayer();
+            Console.WriteLine("Armed with a musket and a satchel of smoked oysters, you enter the unknown.");
+
         }
         else
         {
@@ -93,8 +112,6 @@ public class FountainOfYouth
             Thread.Sleep(4000);
             Console.CursorVisible = true;
         }
-
-        Run();
     }
 
 
@@ -110,7 +127,7 @@ public class FountainOfYouth
     }
 
 
-    private void Run() 
+    public (bool playAgain, bool quickStart) Run() 
     {
         bool victory = false;
         bool gameOver = false;
@@ -121,10 +138,26 @@ public class FountainOfYouth
         if (victory == false) { Console.WriteLine("In your quest for eternal youth, you found eternal death."); PrintDeath(); }
 
         Console.ForegroundColor = ConsoleColor.Gray;
-        Console.Write("Press ENTER to quit: ");
-        Console.ReadKey();
-        Console.WriteLine();
-        Environment.Exit(0);
+
+        while (true)
+        {
+            Console.Write("Type 'r' restart, 'q' to quickstart (no intro), or 'e' to exit: ");
+            string? input = Console.ReadLine();
+            switch (input)
+            {
+                case "r":
+                    Console.Clear();
+                    return (true, false);
+                case "q":
+                    Console.Clear();
+                    return (true, true);
+                case "e":
+                    Console.Clear();
+                    return (false, false);
+                default:
+                    break;
+            }
+        }
     }
 
 
